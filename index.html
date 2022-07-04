@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Al-Quran JSON Indonesia Kemenag">
+  <meta name="author" content="iqbalsyamhad, Maulana Kevin Pradana">
+
+  <title>Al-Quran JSON Indonesia Kemenag</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/simple-sidebar.css" rel="stylesheet">
+
+  <!-- Other custom styles -->
+  <link href="css/styles.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-dark">
+
+  <div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="bg-dark border-right text-white" id="sidebar-wrapper">
+      <div class="sidebar-heading">Al-qur'an </div>
+      <div class="list-group list-group-flush" id="sidenav"></div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+        <button class="btn btn-secondary" id="menu-toggle">Daftar Surat</button>
+      </nav>
+
+      <section class="jumbotron bg-dark text-white pt-1">
+        <div class="container-fluid">
+          <div style="text-align: center;" id="loadingview"></div>
+        </div>
+        <h1 class="m-4" id="surahtitle" style="text-align: center;"></h1>
+        <div class="bismillah d-none">
+          <h2 class="text-center arabic mb-3" style="line-height: 1.5; font-size: 25pt;" dir="rtl">
+            بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
+          </h2>
+          <p class="text-center mb-5">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.</p>
+        </div>
+        <div id="surah" style="margin: 20;"></div>
+      </section>
+    </div>
+  </div>
+  <!-- /#page-content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Menu Toggle Script -->
+  <script>
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    $("#menu-toggle").click(function (e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+
+    $(document).on('click','.list-group-item', function (){
+      $('.list-group-item').removeClass('active');
+      $(this).toggleClass('active');
+      if (width > 768) {
+        $("#wrapper").toggleClass("toggled");
+      }
+      $("#wrapper").toggleClass("toggled");
+      $('.bismillah').removeClass('d-none');
+      let id = $(this).data('id');
+      let title = $(this).data('judul');
+      getSurat(id, title);
+    });
+
+    var baseurl = './';
+    var isLoading = document.getElementById("loadingview");
+    (function () {
+      fetch(baseurl + 'Daftar%20Surat.json')
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (json) {
+          var navContainer = document.getElementById("sidenav");
+          for (var i = 0; i < json.data.length; i++) {
+            var div = document.createElement("div");
+            div.innerHTML = '<a class="list-group-item list-group-item-action bg-dark surat" style="cursor: pointer;" data-id="' + json.data[i].id + '" data-judul="'+ json.data[i].surat_name +'">' + json.data[i].id + '. Surat ' + json.data[i].surat_name + '</a>';
+            navContainer.appendChild(div);
+          }
+        })
+        .catch(function (err) {
+          alert('error: ' + err);
+        });
+    })();
+    function getSurat(id, title) {
+      isLoading.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span>'
+      document.getElementById("surahtitle").innerHTML = title;
+      var mainContainer = document.getElementById("surah");
+      mainContainer.innerHTML = '';
+      fetch(baseurl + 'Surat/' + id + '.json')
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          for (var i = 0; i < data.data.length; i++) {
+            var div = document.createElement("div");
+            div.innerHTML = '<p class="arabic" dir="rtl">' + data.data[i].aya_text + ' <span class="border badge badge-secondary rounded-circle" style="font-size: 20pt">' + data.data[i].aya_number + '</span></p><div class="clearfix"></div><p style="terjemah">' + data.data[i].translation_aya_text + '</p>';
+            mainContainer.appendChild(div);
+          }
+          isLoading.innerHTML = ''
+        })
+        .catch(function (err) {
+          alert('error: ' + err);
+        });
+    }
+  </script>
+
+</body>
+
+</html>
