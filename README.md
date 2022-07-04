@@ -7,7 +7,7 @@ Modified dark mode from [iqbalsyamhad](https://iqbalsyamhad.github.io/quran)
 
 * [Link preview](https://maulanakevinp.github.io/al-quran/)
 <hr>
-<img src="https://raw.githubusercontent.com/maulanakevinp/maulanakevinp.github.io/master/al-quran/preview.png" width="600px">
+<img src="https://raw.githubusercontent.com/maulanakevinp/al-quran/master/preview.png" width="600px">
 
 ## Sumber
 
