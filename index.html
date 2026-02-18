@@ -123,7 +123,7 @@
       let nextPage = page > 1 ? parseInt(page) - 1 : null;
       let prevPage = page < 604 ? parseInt(page) + 1 : null;
       $('#surah').html(`
-        <div class="text-center" style="background-color: #a1a1a1; position: relative;">
+        <div class="text-center" style="background-color: #e0e0e0; position: relative;">
           <button data-id=${prevPage} class="btn btn-secondary btn-nav" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">&lt;</button>
           <img src="./per-page/QK_${paddedPage}.webp" class="img-fluid" alt="Halaman ${page}">
           <button data-id=${nextPage} class="btn btn-secondary btn-nav" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">&gt;</button>
