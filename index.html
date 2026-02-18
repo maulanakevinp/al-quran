@@ -116,6 +116,17 @@
       }
     });
 
+    // tombol arah kiri dan kanan untuk navigasi halaman
+    $(document).on('keydown', function(e) {
+      if ($('#selectDisplay').val() === 'per-halaman') {
+        if (e.key === 'ArrowLeft') {
+          $("#btnPrev").click();
+        } else if (e.key === 'ArrowRight') {
+          $("#btnNext").click();
+        }
+      }
+    });
+
     function loadPage() {
       $('#selectPage').removeClass('d-none');
       let page = $('#selectPage').val();
@@ -124,9 +135,9 @@
       let prevPage = page < 604 ? parseInt(page) + 1 : null;
       $('#surah').html(`
         <div class="text-center" style="background-color: #e0e0e0; position: relative;">
-          <button data-id=${prevPage} class="btn btn-secondary btn-nav" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">&lt;</button>
+          <button id="btnPrev" data-id=${prevPage} class="btn btn-secondary btn-nav" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">&lt;</button>
           <img src="./per-page/QK_${paddedPage}.webp" class="img-fluid" alt="Halaman ${page}">
-          <button data-id=${nextPage} class="btn btn-secondary btn-nav" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">&gt;</button>
+          <button id="btnNext" data-id=${nextPage} class="btn btn-secondary btn-nav" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">&gt;</button>
         </div>
       `);
     }
