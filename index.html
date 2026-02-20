@@ -5,10 +5,10 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Al-Quran JSON Indonesia Kemenag">
+  <meta name="description" content="Al-Quran & Terjemahan Indonesia Kemenag">
   <meta name="author" content="iqbalsyamhad, Maulana Kevin Pradana">
 
-  <title>Al-Quran JSON Indonesia Kemenag</title>
+  <title>Al-Quran & Terjemahan Indonesia Kemenag</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -38,10 +38,10 @@
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
         <button class="btn btn-secondary" id="menu-toggle">Daftar Surat</button>
         <select class="ml-3" id="selectDisplay">
-          <option value="per-surat" selected>Per Surat</option>
-          <option value="per-halaman">Per Halaman</option>
+          <option value="per-surat">Per Surat</option>
+          <option value="per-halaman" selected>Per Halaman</option>
         </select>
-        <select class="ml-3 d-none" id="selectPage"></select>
+        <select class="ml-3" id="selectPage"></select>
         <div class="ml-auto">
           <h5 id="surahtitle" class="text-white"></h5>
         </div>
@@ -64,19 +64,31 @@
   </div>
   <!-- /#page-content-wrapper -->
 
-  </div>
-  <!-- /#wrapper -->
-
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Menu Toggle Script -->
   <script>
-    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    const url = new URL(location);
+    const display = url.searchParams.get('display') || 'per-halaman';
+    const surat = url.searchParams.get('surat') || '1';
+    const currentPage = url.searchParams.get('page') || '1';
+    const width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     for (let i = 1; i <= 604; i++) {
       $('#selectPage').append('<option value="' + i + '">Halaman ' + i + '</option>');
     }
+    setTimeout(() => {
+      $('.list-group-item[data-id="' + surat + '"]').addClass('active');
+      if (display === 'per-halaman') {
+        loadPage();
+      } else {
+        $('#selectPage').addClass('d-none');
+        getSurat($('.list-group-item.active').data('id'), $('.list-group-item.active').data('judul'), currentPage);
+      }
+    }, 100);
+    $('#selectDisplay').val(display).trigger('change');
+    $('#selectPage').val(currentPage).trigger('change');
     $("#menu-toggle").click(function (e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
@@ -89,28 +101,46 @@
         $("#wrapper").toggleClass("toggled");
       }
       $("#wrapper").toggleClass("toggled");
-      $('.bismillah').removeClass('d-none');
-      let id = $(this).data('id');
-      let title = $(this).data('judul');
-      let page = parseInt($(this).data('page'));
+      if ($("#selectDisplay").val() === 'per-surat') {
+        $('.bismillah').removeClass('d-none');
+      } else {
+        $('.bismillah').addClass('d-none');
+      }
+      const id = $(this).data('id');
+      const title = $(this).data('judul');
+      const page = parseInt($(this).data('page'));
       getSurat(id, title, page);
+      url.searchParams.set('page', page);
+      url.searchParams.set('surat', id);
+      history.pushState(null, '', url);
     });
 
     $(document).on('change','#selectDisplay', function (){
-      let value = $(this).val();
-      if(value === 'per-surat') {
-        
+      console.log($("#selectPage").val());
+      if($(this).val() === 'per-surat') {
+        const activeSurat = $('.list-group-item.active');
+        if (activeSurat.length > 0) {
+          const id = activeSurat.data('id');
+          const title = activeSurat.data('judul');
+          const page = url.searchParams.get('page') || activeSurat.data('page');
+          getSurat(id, title, page);
+          $("#selectPage").addClass('d-none');
+        }
       } else {
         loadPage();
       }
+      url.searchParams.set('display', $(this).val());
+      history.pushState(null, '', url);
     });
 
     $("#selectPage").change(function() {
       loadPage();
+      url.searchParams.set('page', $(this).val());
+      history.pushState(null, '', url);
     });
 
     $(document).on('click', '.btn-nav', function() {
-      let page = $(this).data('id');
+      const page = $(this).data('id');
       if (page) {
         $('#selectPage').val(page).change();
       }
@@ -128,11 +158,12 @@
     });
 
     function loadPage() {
+      $(".bismillah").addClass('d-none');
       $('#selectPage').removeClass('d-none');
-      let page = $('#selectPage').val();
-      let paddedPage = String(page).padStart(3, '0');
-      let nextPage = page > 1 ? parseInt(page) - 1 : null;
-      let prevPage = page < 604 ? parseInt(page) + 1 : null;
+      const page = $('#selectPage').val();
+      const paddedPage = String(page).padStart(3, '0');
+      const nextPage = page > 1 ? parseInt(page) - 1 : null;
+      const prevPage = page < 604 ? parseInt(page) + 1 : null;
       $('#surah').html(`
         <div class="text-center" style="background-color: #e0e0e0; position: relative;">
           <button id="btnPrev" data-id=${prevPage} class="btn btn-secondary btn-nav" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">&lt;</button>
@@ -166,6 +197,8 @@
         $('#selectPage').val(page).change();
         return;
       }
+      $('#selectPage').val(page);
+      $(".bismillah").removeClass('d-none');
       isLoading.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span>'
       document.getElementById("surahtitle").innerHTML = title;
       var mainContainer = document.getElementById("surah");
