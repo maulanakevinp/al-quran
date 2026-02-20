@@ -35,8 +35,8 @@
     <!-- Page Content -->
     <div id="page-content-wrapper">
 
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
-        <button class="btn btn-secondary" id="menu-toggle">Daftar Surat</button>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom d-flex justify-content-center">
+        <button class="btn btn-sm btn-secondary" id="menu-toggle">Daftar Surat</button>
         <select class="ml-3" id="selectDisplay">
           <option value="per-surat">Per Surat</option>
           <option value="per-halaman" selected>Per Halaman</option>
@@ -166,9 +166,9 @@
       const prevPage = page < 604 ? parseInt(page) + 1 : null;
       $('#surah').html(`
         <div class="text-center" style="background-color: #e0e0e0; position: relative;">
-          <button id="btnPrev" data-id=${prevPage} class="btn btn-secondary btn-nav" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">&lt;</button>
-          <img src="./per-page/QK_${paddedPage}.webp" class="img-fluid" alt="Halaman ${page}">
-          <button id="btnNext" data-id=${nextPage} class="btn btn-secondary btn-nav" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">&gt;</button>
+          <button id="btnPrev" data-id=${prevPage} class="btn btn-secondary btn-nav" style="position: absolute; left: 10px; ${width > 768 ? 'bottom: 50%; transform: translateY(50%);' : 'bottom: -50px'}">&lt;</button>
+          <img src="./per-page/QK_${paddedPage}.webp" class="img-fluid" alt="Halaman ${page}" style="z-index: 1;">
+          <button id="btnNext" data-id=${nextPage} class="btn btn-secondary btn-nav" style="position: absolute; right: 10px; ${width > 768 ? 'bottom: 50%; transform: translateY(50%);' : 'bottom: -50px'}">&gt;</button>
         </div>
       `);
     }
